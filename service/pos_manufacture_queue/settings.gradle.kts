@@ -1,0 +1,1 @@
+rootProject.name = "com.coffee_service.quadro.org.manufacture_service"

@@ -1,0 +1,24 @@
+version: '3'
+services:
+  pos-manufacture-queue-prod:
+    env_file: ./service/pos_manufacture_queue/.env
+    build:
+      context: ./service/pos_manufacture_queue/
+      dockerfile: Dockerfile
+    ports:
+      - "5000:8443"
+
+  pos-manufacture-queue-stage:
+    env_file: ./service/pos_manufacture_queue/.stage.env
+    build:
+      context: ./service/pos_manufacture_queue/
+      dockerfile: Dockerfile
+    ports:
+      - "5001:8443"
+
+  manufacture-screen-production:
+    build:
+      context: ./web/manufacture_screen/
+      dockerfile: stage.Dockerfile
+    ports:
+      - "3000:3000"

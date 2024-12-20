@@ -1,0 +1,12 @@
+node_modules/
+.output/
+.nuxt/
+.env
+secrets/*
+*.env
+*.db
+.db
+*.log
+.log
+.gradle/
+build/

@@ -1,0 +1,11 @@
+DONE 1. Delta production dinamico desde api -> desde pos -> desde catalogo de productos
+DONE 2. Shown attribute dinamicamente hacer invisible los objetos not Shown
+DONE 3. Nomeclaturas para mrp productions con uids cortos usando secuencias de odoo
+CANCELADO (se usa secuencia del PoS y primer letra del nombre del config-pos) 4. Nomeclaturas pra pos order usando secuencia de pos (usando ajuste del sistema  > pos > tienda)
+CANCELADO - DONE (en lugar de usar secuencias del backend se usa un timestamp base 36 y un consecutivo del index del array donde se encuentra)5. Secuencias para mrp production y pos orden tienen que usar una secuencia del sistema y un consecutivo del dia, completamente offline despues de la primer carga.
+6. Agregar panel y herramientas de administracion a panel de cocina.
+7. Agregar log de eventos y errores en pantalla de cocina. 
+DONE // 8. Fix index del baseurl no actualizandose desde componente
+
+
+

@@ -1,0 +1,45 @@
+{
+    "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+    "productName": "KitchenScreen",
+    "version": "0.1.1",
+    "identifier": "com.tauri.quadro.KitchenScreen",
+    "build": {
+        "beforeDevCommand": "bun run dev",
+        "beforeBuildCommand": "bun run generate",
+        "devUrl": "http://localhost:3000",
+        "frontendDist": "../dist/"
+    },
+    "app": {
+        "windows": [
+            {
+                "title": "Comandas",
+                "height": 1900,
+                "width": 1024
+            }
+        ],
+        "security": {
+            "csp": null
+        }
+    },
+    "bundle": {
+        "linux": {
+            "deb": {
+                "files": {
+                    "/usr/share/README.md": "../README.md",
+                    "/usr/assets": "../assets/"
+                }
+            }
+        },
+        "active": true,
+        "targets": "deb",
+        "icon": [
+            "icons/box.png",
+            "icons/icon.png",
+            "icons/icon-128.png",
+            "icons/icon-16.png",
+            "icons/icon-256.png",
+            "icons/icon-32.png",
+            "icons/icon-64.png"
+        ]
+    }
+}
