@@ -2,19 +2,19 @@
   <ul class="list-none w-full mb-0">
     <li v-for="production in entry.item" :key="production.custom_uid"
       class="py-1 px-3 border-t border-neutral-500 flex items-center w-full" v-show="production.shown">
-      <div class="flex flex-col justify-between w-full">
+      <div class="flex flex-col justify-between w-full text-2_5xl">
         <span class="flex items-center w-full ">
-          <span class="h-auto w-[30%] px-2 rounded-full flex items-center justify-center border border-neutral-800"
+          <span class="h-auto w-[30%] rounded-full flex items-center justify-center border border-neutral-800 text-xl"
             :class="getTimeClass(production.production_delta)">
             {{ formatTime(production.production_delta) }}
           </span>
-          <span class="ml-2 w-full text-left">
+          <span class="ml-2 w-full text-left text-old-copper-950">
             {{ production.product.display_name }}
           </span>
         </span>
-        <ul class="list-none mb-0 ml-2 grid grid-cols-2 gap-x-4 text-base">
+        <ul class="list-none mb-0 grid grid-cols-2 gap-x-4 text-lg">
           <li v-for="extra in production.component" :key="extra.display_name"
-            class="text-rose-700 text-left leading-none">
+            class="text-color-extras text-center leading-none">
             <span v-if="extra.qty > 0">- {{ extra.display_name }} ({{ extra.qty }})</span>
           </li>
         </ul>
@@ -32,12 +32,12 @@ defineProps({
 function getTimeClass(delta) {
   if (delta < 60000) {
     // Menos de 1 minuto
-    return 'bg-red-500 text-chocolate-100';
+    return 'timer-ending';
   } else if (delta < 120000) {
     // Menos de 2 minutos
-    return 'bg-amber-500 text-chocolate-100';
+    return 'bg-amber-500 text-white';
   }
-  return 'bg-emerald-600 text-chocolate-100';
+  return 'bg-emerald-600 text-white';
 }
 
 function formatTime(ms) {

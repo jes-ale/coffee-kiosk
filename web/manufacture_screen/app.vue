@@ -1,10 +1,10 @@
 <template>
-  <div class="h-full w-full bg-primary">
+  <div class="h-screen w-screen bg-primary flex justify-center">
     <!-- Main app content -->
-    <div v-if="isLogin" class="flex flex-col h-full w-full px-2 py-1">
-      <div class="h-full">
-        <div :class="[isPaused ? 'bg-neutral-400' : 'bg-chocolate-400']"
-          class="shadow-xl absolute z-10  p-2 flex flex-col items-center justify-center font-bold border-t border-r border-black text-white text-xl  bottom-0 left-0">
+    <div v-if="isLogin" class="flex flex-col px-2 py-1 w-full">
+      <div class="">
+        <div :class="[isPaused ? 'bg-primary-500' : 'bg-secondary-500']"
+        class="shadow-xl absolute z-10  p-2 flex flex-col items-center justify-center font-bold border-t border-r border-black text-white text-xl  bottom-0 left-0">
           <span> {{ computedQueueEntries.length }} / {{ productionQueueKeys.length }}</span>
         </div>
 
@@ -18,7 +18,7 @@
               class="flex w-full h-full cursor-pointer">
 
               <SwiperSlide v-for="key of computedQueueEntries" :key="key"
-                class="flex flex-col w-full h-full m-4 text-center font-bold text-lg bg-secondary">
+                class="flex flex-col w-full h-full text-center font-bold text-lg bg-secondary">
 
                 <div class="rounded border border-black shadow-md flex flex-col items-center w-full h-full">
                   <QueueEntryHeader :entry="getQueueItem(key) || {
@@ -34,7 +34,7 @@
         </div>
 
 
-        <div v-else class=" text-center text-lg py-32 font-bold text-coffee-400">
+        <div v-else class=" text-center text-5xl py-32 font-bold text-old-copper-900">
           No hay órdenes
         </div>
       </div>
@@ -42,7 +42,7 @@
 
     <div class="h-full w-full" v-else>
       <button type="button" @click="isOpenRemoteURL = !isOpenRemoteURL"
-        class="px-8 w-full font-bold text-neutral-800 bg-secondary border-b border-black">
+        class="w-full font-bold text-neutral-800 bg-primary-500 border-b border-black">
         {{ baseURL }}
       </button>
       <Login @login="login" />
@@ -195,32 +195,71 @@ function updateBaseURL(newAllowedRemoteIndex) {
 }
 
 // Async Handlers
-async function login(body: { user: string, password: string }) {
-  isLoading.value = true
-  try {
-    baseURL.value = allowedRemoteURLs.value[allowedRemoteIndex.value]
-    const response = await $fetch<{ token: string }>(`https://${baseURL.value}/login`, {
-      method: "POST",
-      headers: {
-        "Accept": "*",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ user: body.user, password: body.password })
-    })
+// async function login(body: { user: string, password: string }) {
+//   isLoading.value = true
+//   try {
+//     baseURL.value = allowedRemoteURLs.value[allowedRemoteIndex.value]
+//     const response = await $fetch<{ token: string }>(`https://${baseURL.value}/login`, {
+//       method: "POST",
+//       headers: {
+//         "Accept": "*",
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({ user: body.user, password: body.password })
+//     })
 
-    if (!response) throw new Error("JWT Token not found")
-    if (response.token.length < 12) throw new Error("Invalid JWT Token")
-    auth.value.jwt_secret = response.token
-    isLogin.value = true
-    connect(`wss://${baseURL.value}/updates`)
-    fetchQueueWaitRoom()
-  } catch (e) {
-    console.error(e)
-    alert(e)
-  } finally {
-    isLoading.value = false
+//     if (!response) throw new Error("JWT Token not found")
+//     if (response.token.length < 12) throw new Error("Invalid JWT Token")
+//     auth.value.jwt_secret = response.token
+//     isLogin.value = true
+//     connect(`wss://${baseURL.value}/updates`)
+//     fetchQueueWaitRoom()
+//   } catch (e) {
+//     console.error(e)
+//     alert(e)
+//   } finally {
+//     isLoading.value = false
+//   }
+// }
+
+async function login(body: { user: string; password: string }) {
+  isLoading.value = true;
+
+  for (let i = 0; i < allowedRemoteURLs.value.length; i++) {
+    allowedRemoteIndex.value = i; // Cambiar el índice al actual
+    baseURL.value = allowedRemoteURLs.value[allowedRemoteIndex.value];
+
+    try {
+      const response = await $fetch<{ token: string }>(`https://${baseURL.value}/login`, {
+        method: 'POST',
+        headers: {
+          Accept: '*',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ user: body.user, password: body.password }),
+      });
+
+      if (!response || response.token.length < 12) {
+        throw new Error('Invalid or Missing JWT Token');
+      }
+
+      // Si llega aquí, el token es válido, realizar el login
+      auth.value.jwt_secret = response.token;
+      isLogin.value = true;
+      connect(`wss://${baseURL.value}/updates`);
+      fetchQueueWaitRoom();
+      return; // Salir de la función ya que el login fue exitoso
+    } catch (e) {
+      console.warn(`Login failed for ${baseURL.value}:`, e);
+      // Continuar con la siguiente URL
+    }
   }
+
+  // Si se recorren todas las URLs sin éxito
+  alert('No se pudo iniciar sesión con ninguna de las URLs permitidas');
+  isLoading.value = false;
 }
+
 
 async function apiCall<T>(url: string, method: string, body?: object): Promise<{ data: T, error: any }> {
   isLoading.value = true
@@ -372,11 +411,12 @@ async function checkIntervalDone() {
 onNuxtReady(() => {
   baseURL.value = allowedRemoteURLs.value[allowedRemoteIndex.value];
   intervalId.value = setInterval(checkIntervalDone, 1000);
+  login({ user: 'admin', password: 'pass' });
 })
 
 onBeforeUnmount(() => {
   clearInterval(intervalId.value);
-  disconnect();
+  disconnect();  
 })
 
 </script>
@@ -414,97 +454,27 @@ onBeforeUnmount(() => {
   background-color: rgb(196 147 75 / var(--tw-bg-opacity));
 }
 
-
-
-
-
-.bg-chocolate-100 {
-  background-color: #F5F5DC;
-  /* Dry Beige */
+.text-color-extras {
+  color: rgb(214, 10, 10);
 }
 
-.bg-chocolate-200 {
-  background-color: #F2C464;
-  /* Soft Cream */
+.timer-ending {
+  background-color: #d60a0a;  
+  color: #f0e7d1;
 }
 
-.bg-chocolate-300 {
-  background-color: #F0F0F0;
-  /* Soft Light */
+.text-old-copper-900 {
+  --tw-text-opacity: 1;
+  color: rgb(90 54 41 / var(--tw-text-opacity));
 }
 
-.bg-chocolate-400 {
-  background-color: #964B00;
-  /* Warm Brown */
+.text-old-copper-950 {
+  --tw-text-opacity: 1;
+  color: rgb(52 27 20 / var(--tw-text-opacity));
 }
 
-.bg-chocolate-500 {
-  background-color: #786C3B;
-  /* Dark Chocolate */
-}
-
-.bg-chocolate-600 {
-  background-color: #452B1F;
-  /* Espresso */
-}
-
-.bg-chocolate-700 {
-  background-color: #452B1F;
-  /* Espresso */
-}
-
-.bg-chocolate-800 {
-  background-color: #452B1F;
-  /* Espresso */
-}
-
-.bg-chocolate-900 {
-  background-color: #452B1F;
-  /* Espresso */
-}
-
-.text-chocolate-100 {
-  color: #F5F5DC;
-  /* Dry Beige */
-}
-
-.text-chocolate-200 {
-  color: #F2C464;
-  /* Soft Cream */
-}
-
-.text-chocolate-300 {
-  color: #F0F0F0;
-  /* Soft Light */
-}
-
-.text-chocolate-400 {
-  color: #964B00;
-  /* Warm Brown */
-}
-
-.text-chocolate-500 {
-  color: #786C3B;
-  /* Dark Chocolate */
-}
-
-.text-chocolate-600 {
-  color: #452B1F;
-  /* Espresso */
-}
-
-.text-chocolate-700 {
-  color: #452B1F;
-  /* Espresso */
-}
-
-.text-chocolate-800 {
-  color: #452B1F;
-  /* Espresso */
-}
-
-.text-chocolate-900 {
-  color: #452B1F;
-  /* Espresso */
+.text-2_5xl {
+  font-size: 1.75rem;
+  line-height: 2.12rem;
 }
 </style>
