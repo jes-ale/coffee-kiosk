@@ -1,48 +1,48 @@
 <template>
-  <div class="h-screen w-screen bg-chocolate-100">
+  <div class="h-full w-full bg-primary">
     <!-- Main app content -->
-    <div v-if="isLogin" class="flex flex-col h-full w-full bg-coffee-200 px-2 py-1">
+    <div v-if="isLogin" class="flex flex-col h-full w-full px-2 py-1">
+      <div class="h-full">
+        <div :class="[isPaused ? 'bg-neutral-400' : 'bg-chocolate-400']"
+          class="shadow-xl absolute z-10  p-2 flex flex-col items-center justify-center font-bold border-t border-r border-black text-white text-xl  bottom-0 left-0">
+          <span> {{ computedQueueEntries.length }} / {{ productionQueueKeys.length }}</span>
+        </div>
 
-      <div :class="[isPaused ? 'bg-neutral-400' : 'bg-chocolate-400']"
-        class="shadow-xl absolute z-100  p-2 flex flex-col items-center justify-center font-bold border-t border-r border-black text-white text-xl  bottom-0 left-0">
-        <span> {{ computedQueueEntries.length }} / {{ productionQueueKeys.length }}</span>
+        <div v-if="computedQueueEntries.length !== 0" class="">
+          <TransitionRoot :show="computedQueueEntries.length !== 0" enter="transition-opacity duration-75"
+            enter-from="opacity-0" enter-to="opacity-100" leave="transition-opacity duration-150"
+            leave-from="opacity-100" leave-to="opacity-0">
+
+            <Swiper :modules="modules" :slides-per-view="3" :space-between="10" navigation
+              :scrollbar="{ draggable: true }" :pagination="{ clickable: true }"
+              class="flex w-full h-full cursor-pointer">
+
+              <SwiperSlide v-for="key of computedQueueEntries" :key="key"
+                class="flex flex-col w-full h-full m-4 text-center font-bold text-lg bg-secondary">
+
+                <div class="rounded border border-black shadow-md flex flex-col items-center w-full h-full">
+                  <QueueEntryHeader :entry="getQueueItem(key) || {
+                    origin: 'n/a', unique_name: '', item: [], totalDelta: 0
+                  }" />
+                  <QueueEntryItems :entry="getQueueItem(key) || {
+                    origin: 'n/a', unique_name: '', item: [], totalDelta: 0
+                  }" />
+                </div>
+              </SwiperSlide>
+            </Swiper>
+          </TransitionRoot>
+        </div>
+
+
+        <div v-else class=" text-center text-lg py-32 font-bold text-coffee-400">
+          No hay órdenes
+        </div>
       </div>
-
-      <div v-if="computedQueueEntries.length !== 0" class="mt-4">
-
-        <TransitionRoot :show="computedQueueEntries.length !== 0" enter="transition-opacity duration-75"
-          enter-from="opacity-0" enter-to="opacity-100" leave="transition-opacity duration-150" leave-from="opacity-100"
-          leave-to="opacity-0">
-
-          <Swiper :modules="modules" :slides-per-view="3" :space-between="10" navigation
-            :scrollbar="{ draggable: true }" :pagination="{ clickable: true }"
-            class="flex w-full h-auto cursor-pointer">
-
-            <SwiperSlide v-for="key of computedQueueEntries" :key="key"
-              class="flex flex-col w-full h-auto p-4 text-center font-bold text-lg">
-
-              <div class="rounded border border-black shadow-md flex flex-col items-center w-full">
-                <QueueEntryHeader :entry="getQueueItem(key) || {
-                  origin: 'n/a', unique_name: '', item: [], totalDelta: 0
-                }" />
-                <QueueEntryItems :entry="getQueueItem(key) || {
-                  origin: 'n/a', unique_name: '', item: [], totalDelta: 0
-                }" />
-              </div>
-            </SwiperSlide>
-          </Swiper>
-        </TransitionRoot>
-      </div>
-
-      <div v-else class=" text-center text-lg py-32 font-bold text-coffee-400">
-        No hay órdenes
-      </div>
-
     </div>
 
     <div class="h-full w-full" v-else>
       <button type="button" @click="isOpenRemoteURL = !isOpenRemoteURL"
-        class="px-8 w-full font-bold text-neutral-800 bg-chocolate-200 border-b border-black">
+        class="px-8 w-full font-bold text-neutral-800 bg-secondary border-b border-black">
         {{ baseURL }}
       </button>
       <Login @login="login" />
@@ -383,6 +383,41 @@ onBeforeUnmount(() => {
 
 
 <style>
+.bg-primary {
+  background-color: #f0e7d1;
+}
+
+.bg-secondary {
+  background-color: #e2cfa6;
+}
+
+.bg-primary-500 {  
+  background-color: rgb(180 127 62);
+}
+
+.bg-secondary-500{
+  background-color: rgb(111, 77, 38);
+}
+
+.bg-old-copper-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(240 231 209 / var(--tw-bg-opacity));
+}
+
+.bg-old-copper-200 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(226 207 166 / var(--tw-bg-opacity));
+}
+
+.bg-old-copper-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(196 147 75 / var(--tw-bg-opacity));
+}
+
+
+
+
+
 .bg-chocolate-100 {
   background-color: #F5F5DC;
   /* Dry Beige */

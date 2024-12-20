@@ -15,7 +15,7 @@ function submit() {
 </script>
 
 <template>
-  <div class="h-screen w-full flex flex-col justify-center items-center bg-chocolate-100">
+  <div class="h-screen w-full flex flex-col justify-center items-center bg-primary">
     <div class="max-w-md p-8 bg-chocolate-200 rounded-md shadow-md">
       <h2 class="text-2xl font-bold text-chocolate-500">Login</h2>
       <form class="space-y-4">
