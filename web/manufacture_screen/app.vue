@@ -136,18 +136,18 @@ const intervalTime = ref(1000)
 
 // - Configurable Settings 
 const allowedRemoteURLs = ref([
-  // 'coffee1.quadrosoluciones.mx',
-  // 'coffee1-test.quadrosoluciones.mx',
-  // 'coffee2-test.quadrosoluciones.mx',
-  // 'coffee3.quadrosoluciones.mx',
-  // '192.168.2.71:5000',
-  // '192.168.2.71:5001',
-  // '192.168.2.71:5002',
-  // '192.168.2.71:5003',
-  // 'localhost:5000',
-  // 'localhost:5001',
-  // 'localhost:5002',
-  // 'localhost:5003',
+  'coffee1.quadrosoluciones.mx',
+  'coffee1-test.quadrosoluciones.mx',
+  'coffee2-test.quadrosoluciones.mx',
+  'coffee3.quadrosoluciones.mx',
+  '192.168.2.71:5000',
+  '192.168.2.71:5001',
+  '192.168.2.71:5002',
+  '192.168.2.71:5003',
+  'localhost:5000',
+  'localhost:5001',
+  'localhost:5002',
+  'localhost:5003',
   'localhost:8443'
 ])
 const allowedRemoteIndex = ref(0)
